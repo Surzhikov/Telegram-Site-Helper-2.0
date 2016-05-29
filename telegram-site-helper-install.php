@@ -3,7 +3,9 @@ header('Content-Type: text/html; charset=utf-8');
 mb_internal_encoding("UTF-8");
 DEFINE("JQUERY_URL", $_SERVER["SCRIPT_NAME"]."?act=jquery");
 DEFINE("STYLE_URL", $_SERVER["SCRIPT_NAME"]."?act=css");
-DEFINE("DIR_ON_SERVER", dirname($_SERVER["SCRIPT_NAME"]));
+DEFINE("DIR_ON_SERVER", dirname($_SERVER["SCRIPT_NAME"])); // __DIR__ ?
+DEFINE('ROOT_DIR', "//".$_SERVER["HTTP_HOST"] . DIR_ON_SERVER);
+
  
 $sqliteCreate="
 DROP TABLE IF EXISTS telegramSiteHelperChats;
@@ -114,84 +116,63 @@ switch ($act) {
 
 		$scriptHash=uniqid("");
 
-		if(array_key_exists("managerPassword", $_POST)){
-			if($_POST["managerPassword"]!=null){
-				$statuses["statusCheckingAdminPassword"]="ok";
-				$managerPassword=$_POST["managerPassword"];
-			}else{
-				$statuses["statusCheckingAdminPassword"]="error";
+		$statuses["statusCheckingAdminPassword"] = "ok";
+		if (array_key_exists("managerPassword", $_POST)) {
+			if ($_POST["managerPassword"] != null) {
+				$managerPassword = $_POST["managerPassword"];
+			} else {
+				$statuses["statusCheckingAdminPassword"] = "error";
 			}
-		}else{
-			$statuses["statusCheckingAdminPassword"]="ok";
 		}
 
-		if(array_key_exists("selfCertPart", $_POST)){
-			if($_POST["selfCertPart"]!=null){
-				$selfCertPart=$_POST["selfCertPart"];
-			}else{
-				$selfCertPart=null;
-			} 
-		}else{
-			$selfCertPart=null;
-		}
-
-
-		if(array_key_exists("HTTP_X_HTTPS", $_SERVER)  || array_key_exists("HTTPS", $_SERVER)){
-			if(@$_SERVER['HTTPS']!='off' || @$_SERVER['HTTP_X_HTTPS']==1){
-				$statuses["statusCheckingHTTPS"]="ok";
-			}else{
-				$statuses["statusCheckingHTTPS"]="error";
+		$selfCertPart = null;
+		if (array_key_exists("selfCertPart", $_POST)) {
+			if ($_POST["selfCertPart"] != null) {
+				$selfCertPart = $_POST["selfCertPart"];
 			}
-		}else{
-			$statuses["statusCheckingHTTPS"]="error";
 		}
 
-		
-		if(array_key_exists("botToken", $_POST)){
-			if($_POST["botToken"]!=null){
+		$statuses["statusCheckingHTTPS"] = "error";
+		if (array_key_exists("HTTP_X_HTTPS", $_SERVER)  || array_key_exists("HTTPS", $_SERVER)) {
+			if (@$_SERVER['HTTPS'] != 'off' || @$_SERVER['HTTP_X_HTTPS'] == 1) {
+				$statuses["statusCheckingHTTPS"] = "ok";
+			}
+		}
+
+
+		$statuses["statusCheckingBotAccess"]="error";
+		if (array_key_exists("botToken", $_POST)) {
+			if ($_POST["botToken"] != null) {
 		 		try{
 					$botGetMe=@file_get_contents("https://api.telegram.org/bot".$_POST["botToken"]."/getMe");
 					//var_dump($botGetMe);
 					$botAnswer=json_decode($botGetMe, true);
-					if($botAnswer["ok"]=="true"){
+					if ($botAnswer["ok"]=="true") {
 						$statuses["statusCheckingBotAccess"]="ok";
 						$botToken=$_POST["botToken"];
-					}else{
-						$statuses["statusCheckingBotAccess"]="error";
 					}
 					
 				}catch(Exception $e){
 					$statuses["statusCheckingBotAccess"]="error";
 				}
-			}else{
-				$statuses["statusCheckingBotAccess"]="error";
 			}
-		}else{
-			$statuses["statusCheckingBotAccess"]="error";
 		}
 
 
-		if(array_key_exists("dbType", $_POST)){
-			if($_POST["dbType"]=="mysql"){
-				if(extension_loaded('pdo_mysql')){
+		$statuses["statusCheckingSQLAccess"]="error";
+		if (array_key_exists("dbType", $_POST)) {
+			if ($_POST["dbType"]=="mysql") {
+				if (extension_loaded('pdo_mysql')) {
 					$statuses["statusCheckingSQLAccess"]="ok";
-				}else{
-					$statuses["statusCheckingSQLAccess"]="error";
 				}
 				$dbType="mysql";
 			
-			}else if($_POST["dbType"]=="sqlite"){
+			} elseif ($_POST["dbType"]=="sqlite") {
 				if(extension_loaded('pdo_sqlite')){
 					$statuses["statusCheckingSQLAccess"]="ok";
-				}else{
-					$statuses["statusCheckingSQLAccess"]="error";
 				}
 				$dbType="sqlite";
-			}else{
-				$statuses["statusCheckingSQLAccess"]="error";
 			}
-		}else{
-			$statuses["statusCheckingSQLAccess"]="error";
 		}
 
 
@@ -289,15 +270,13 @@ switch ($act) {
 					$setWebHook=setWebHook($botToken,$whUrl);
 				}
 
+				$statuses["statusSetWebHook"]="error";
 				try{
 					$setWebHookAnswer=json_decode($setWebHook,true);
-					if(@$setWebHookAnswer["ok"]==true){
-						$setWebHookAnswer["url"]=$whUrl;
+					$statuses["statusSetWebHookInfo"]=$setWebHookAnswer;
+					if (@$setWebHookAnswer["ok"]==true) {
 						$statuses["statusSetWebHook"]="ok";
-						$statuses["statusSetWebHookInfo"]=$setWebHookAnswer;
-					}else{
-						$statuses["statusSetWebHook"]="error";
-						$statuses["statusSetWebHookInfo"]=$setWebHookAnswer;
+						$setWebHookAnswer["url"]=$whUrl;
 					}
 				}catch(Exception $e){
 					$statuses["statusSetWebHook"]="error";
@@ -323,10 +302,10 @@ switch ($act) {
 
 	case 'urls':
 		header("Content-Type:text/css");
-		$cssUrl="//".$_SERVER["HTTP_HOST"]."".DIR_ON_SERVER."/telegram-site-helper.css";
-		$jsUrl="//".$_SERVER["HTTP_HOST"]."".DIR_ON_SERVER."/telegram-site-helper.js";
-		$apiUrl="//".$_SERVER["HTTP_HOST"]."".DIR_ON_SERVER."/telegram-site-helper-api.php";
-		$thisDir=$_SERVER["DOCUMENT_ROOT"]."".DIR_ON_SERVER."/";
+		$cssUrl = ROOT_DIR . "/telegram-site-helper.css";
+		$jsUrl = ROOT_DIR ."/telegram-site-helper.js";
+		$apiUrl = ROOT_DIR ."/telegram-site-helper-api.php";
+		$thisDir = $_SERVER["DOCUMENT_ROOT"]."".DIR_ON_SERVER."/";
 	
 		$answer=array("status"=>"ok","jsUrl"=>$jsUrl,"cssUrl"=>$cssUrl,"apiUrl"=>$apiUrl,"thisDir"=>$thisDir);
 		echo json_encode($answer);

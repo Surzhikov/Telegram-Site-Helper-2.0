@@ -1,8 +1,9 @@
-
+#Attention!
 If you want new version of TelegramSiteHelper (each customet in new chatroom)
 Please Twitter tweet: 
 `@telegram #telegramPleaseMakeBotPossibleToCreateGroup`
 
+#Внимание!
 Друзья, если вы хотите новый более удобный чат (с разделением менеджеров по чатам)
 Пожалуйста сделайте tweet в Твиттере:
 `@telegram #telegramPleaseMakeBotPossibleToCreateGroup`

@@ -1,3 +1,13 @@
+
+If you want new version of TelegramSiteHelper (each customet in new chatroom)
+Please Twitter tweet: 
+`@telegram #telegramPleaseMakeBotPossibleToCreateGroup`
+
+Друзья, если вы хотите новый более удобный чат (с разделением менеджеров по чатам)
+Пожалуйста сделайте tweet в Твиттере:
+`@telegram #telegramPleaseMakeBotPossibleToCreateGroup`
+
+
 # Telegram-Site-Helper-2.0
 Little chat (based on Telegram BOT platform) for creating web site helper
 

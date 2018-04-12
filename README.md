@@ -14,7 +14,7 @@ Little chat (based on Telegram BOT platform) for creating web site helper
 
 Installation info: https://habrahabr.ru/post/302056/ (in russian)
 
-Если не можете установить сами - закажите установку: <a href="https://voltsoft.ru/telegram-site-helper">https://voltsoft.ru/telegram-site-helper</a>
+Если не можете установить скрипт - воспользуйтесь облачным аналогом: <a href="https://telme.chat">https://telme.chat</a>
 <br>
 <br>
 Donate by <b>PayPal</b> to andrey.surzhikov@gmail.com<br>
